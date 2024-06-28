@@ -2,6 +2,14 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer utilities {
+  input:hover::placeholder {
+    color: transparent;
+    transition: opacity 1s ease-in-out; 
+  opacity: 0.5; 
+  }
+}
+
 /* @layer base {
     :root {
       --background: black;
@@ -105,9 +113,5 @@ body {
   height: 100vh;
   background-color: black;
   color: white;
-  /* font-size: 50px;
-  font-weight: bolder;
-  display: flex;
-  justify-content: center;
-  align-items: center; */
+  
 }
