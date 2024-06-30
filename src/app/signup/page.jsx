@@ -5,6 +5,7 @@ import { signupSchema } from '@/schemas/signupSchema';
 const SignupForm = () => {
   const [errors, setErrors] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [message, setMessage] = useState('');
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
@@ -43,6 +44,24 @@ const SignupForm = () => {
     } else {
       setErrors([]);
       // Perform your form submission logic here
+    }
+
+    const res = await fetch('/api/users/signup' , {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({formData}),
+    })
+    if (res.ok)
+    {
+      const data = await res.json();
+      setMessage('Signup successful! Welcome, ' + data.user.username);
+      setFormData('');
+    }
+    else {
+      const errorData = await res.json();
+      setErrors([{ for: 'signup', message: 'Signup failed: ' + errorData.error }]); // Handle error case properly
     }
 
     setIsLoading(false);
