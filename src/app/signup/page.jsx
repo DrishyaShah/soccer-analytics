@@ -1,6 +1,8 @@
 "use client";
 import React, { useEffect, useState } from 'react';
 import { signupSchema } from '@/schemas/signupSchema';
+// import { useRouter } from 'next/navigation';
+import axios from 'axios';
 
 const SignupForm = () => {
   const [errors, setErrors] = useState([]);
@@ -43,27 +45,31 @@ const SignupForm = () => {
       setErrors(errArr);
     } else {
       setErrors([]);
-      // Perform your form submission logic here
+     
     }
 
-    const res = await fetch('/api/users/signup' , {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({formData}),
-    })
-    if (res.ok)
-    {
-      const data = await res.json();
-      setMessage('Signup successful! Welcome, ' + data.user.username);
-      setFormData('');
-    }
-    else {
-      const errorData = await res.json();
-      setErrors([{ for: 'signup', message: 'Signup failed: ' + errorData.error }]); // Handle error case properly
-    }
-
+    // const res = await fetch('/api/users/signup' , {
+    //   method: 'POST',
+    //   headers: {
+    //     'Content-Type': 'application/json',
+    //   },
+    //   body: JSON.stringify({formData}),
+    // })
+    // if (res.ok)
+    // {
+    //   const data = await res.json();
+    //   setMessage('Signup successful! Welcome, ' + data.user.username);
+    //   setFormData('');
+    // }
+    // else {
+    //   const errorData = await res.json();
+    //   setErrors([{ for: 'signup', message: 'Signup failed: ' + errorData.error }]); 
+    // }
+    
+    
+    const res = await axios.post("/api/users/signup" , formData);
+    console.log("Signup success" , res.data)
+    
     setIsLoading(false);
   };
 

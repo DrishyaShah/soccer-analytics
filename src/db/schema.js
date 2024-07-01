@@ -1,6 +1,7 @@
-
-import { pgTable, pgColumn, integer, string, boolean, date, serial, text} from 'drizzle-orm/pg-core';
-import { drizzle } from 'drizzle-orm';
+import {sql} from '@vercel/postgres'
+import { pgTable, boolean, serial, text} from 'drizzle-orm/pg-core';
+import { drizzle } from 'drizzle-orm/vercel-postgres';
+import {config } from 'dotenv'
 
 export const User = pgTable('users', {
     id: serial('id').primaryKey(),
@@ -14,8 +15,15 @@ export const User = pgTable('users', {
     // forgotPasswordTokenExpiry: date('forgot_password_token_expiry').nullable(),
     // verifyToken: text('verify_token').nullable(),
     // verifyTokenExpiry: date('verify_token_expiry').nullable(),
-});
+},
+(users) => {
+    return {
+      uniqueIdx: uniqueIndex('unique_idx').on(users.email),
+    }
+  }
 
-// const db = drizzle(process.env.DATABASE_URL, { dialect: 'postgres' });
+);
+config({path: 'env'})
+export const db = drizzle(sql);
 
 
