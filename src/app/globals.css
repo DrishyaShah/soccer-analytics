@@ -115,3 +115,17 @@ body {
   color: white;
   
 }
+
+.toast-success {
+  background-color: #111312 !important; /* Black */
+  color: #FFD700 !important; /* Yellow for text */
+}
+
+.toast-error {
+  background-color: #111312 !important; /* Black */
+  color: #FFD700 !important; /* Yellow for text */
+}
+
+.toast-progress-bar {
+  background-color: #FFD700 !important; /* Yellow for progress bar */
+}
