@@ -11,10 +11,10 @@ export const User = pgTable('users', {
     password: text('password').notNull(),
     isVerified: boolean('is_verified').default(false),
     isAdmin: boolean('is_admin').default(false),
-    // forgotPasswordToken: text('forgot_password_token').nullable(),
-    // forgotPasswordTokenExpiry: date('forgot_password_token_expiry').nullable(),
-    // verifyToken: text('verify_token').nullable(),
-    // verifyTokenExpiry: date('verify_token_expiry').nullable(),
+    forgotPasswordToken: text('forgot_password_token').nullable(),
+    forgotPasswordTokenExpiry: date('forgot_password_token_expiry').nullable(),
+    verifyToken: text('verify_token').nullable(),
+    verifyTokenExpiry: date('verify_token_expiry').nullable(),
 },
 (users) => {
     return {

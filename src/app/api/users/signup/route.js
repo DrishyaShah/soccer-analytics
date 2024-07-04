@@ -2,6 +2,9 @@ import { NextResponse, NextRequest} from 'next/server';
 import bcryptjs from "bcryptjs";
 import {db, User } from "@/db/schema"
 import { eq } from 'drizzle-orm';
+import { sendEmail
+    
+ } from '@/helpers/mailer';
 
 // import envConfig from '../../../drizzle/envConfig';
 
@@ -28,6 +31,10 @@ export async function POST(req) {
       email,
       password: hashedPassword,
     }).returning().execute();
+
+    await sendEmail({email, emailType: "VERIFY" , userId: user.id})
+
+
     return NextResponse.json({success: true, user});
 }
 catch (error)
