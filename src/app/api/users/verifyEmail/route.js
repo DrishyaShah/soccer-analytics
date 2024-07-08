@@ -1,27 +1,31 @@
 import { db, User } from "@/db/schema";
 import { NextResponse } from "next/server";
-import {sql} from 'drizzle-orm'
+import {sql, eq} from 'drizzle-orm'
 
 export async function POST(req) {
   try {
-    const reqBody = await req.json();
-    const { token } = reqBody;
+    const {token} = await req.json();
+    // const { token } = reqBody;
     console.log(token);
 
-    const user = await db.select().from(User).where(
-      sql`${User.verifyToken} = ${token} AND ${User.verifyTokenExpiry} > ${new Date().toISOString()}`
+    const users = await db.select().from(User).where(
+      // sql`${User.verifyToken} = ${token} AND ${User.verifyTokenExpiry} > ${new Date().toISOString()}`
+      sql`${User.verifyToken} = ${token}`
     );
 
-    if (!user)
+    if (users.length === 0)
       {
         return NextResponse.json({ message: "Invalid token" }, { status: 400 });
       }
+      const user = users[0]
       console.log(user);
 
-      user.isVerified = true;
-      user.verifyToken = undefined;
-      user.verifyTokenExpiry = undefined;
-      await db.update(User).set(user).where(sql`${User.id} = ${user.id}`)
+      await db.update(User).set({
+        isVerified: true,
+        // verifyToken: null,
+        verifyTokenExpiry: null
+      }).where(eq(User.email, user.email)).execute();
+  
 
       return NextResponse.json({
         message: "User verified successfully",

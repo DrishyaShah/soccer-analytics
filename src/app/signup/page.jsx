@@ -55,23 +55,6 @@ const SignupForm = () => {
      
     }
 
-    // const res = await fetch('/api/users/signup' , {
-    //   method: 'POST',
-    //   headers: {
-    //     'Content-Type': 'application/json',
-    //   },
-    //   body: JSON.stringify({formData}),
-    // })
-    // if (res.ok)
-    // {
-    //   const data = await res.json();
-    //   setMessage('Signup successful! Welcome, ' + data.user.username);
-    //   setFormData('');
-    // }
-    // else {
-    //   const errorData = await res.json();
-    //   setErrors([{ for: 'signup', message: 'Signup failed: ' + errorData.error }]); 
-    // }
     
     try {
     const res = await axios.post("/api/users/signup" , formData);

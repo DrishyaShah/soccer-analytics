@@ -1,7 +1,8 @@
 import {sql} from '@vercel/postgres'
-import { pgTable, boolean, serial, text} from 'drizzle-orm/pg-core';
+import { pgTable, boolean, serial, text, date, uniqueIndex, timestamp, primaryKey, integer} from 'drizzle-orm/pg-core';
 import { drizzle } from 'drizzle-orm/vercel-postgres';
 import {config } from 'dotenv'
+
 
 export const User = pgTable('users', {
     id: serial('id').primaryKey(),
@@ -11,10 +12,10 @@ export const User = pgTable('users', {
     password: text('password').notNull(),
     isVerified: boolean('is_verified').default(false),
     isAdmin: boolean('is_admin').default(false),
-    forgotPasswordToken: text('forgot_password_token').nullable(),
-    forgotPasswordTokenExpiry: date('forgot_password_token_expiry').nullable(),
-    verifyToken: text('verify_token').nullable(),
-    verifyTokenExpiry: date('verify_token_expiry').nullable(),
+    forgotPasswordToken: text('forgot_password_token'),
+    forgotPasswordTokenExpiry: date('forgot_password_token_expiry'),
+    verifyToken: text('verify_token'),
+    verifyTokenExpiry: date('verify_token_expiry'),
 },
 (users) => {
     return {

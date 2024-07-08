@@ -2,9 +2,7 @@ import { NextResponse, NextRequest} from 'next/server';
 import bcryptjs from "bcryptjs";
 import {db, User } from "@/db/schema"
 import { eq } from 'drizzle-orm';
-import { sendEmail
-    
- } from '@/helpers/mailer';
+import { sendEmail } from '@/helpers/mailer';
 
 // import envConfig from '../../../drizzle/envConfig';
 
@@ -25,14 +23,16 @@ export async function POST(req) {
         const salt = await bcryptjs.genSalt(10);
         const hashedPassword = await bcryptjs.hash(password, salt);
         
-    const user = await db.insert(User).values({
+    const user = await db.insert(User).values({ 
       firstName,
       lastName,
       email,
       password: hashedPassword,
+      
     }).returning().execute();
 
-    await sendEmail({email, emailType: "VERIFY" , userId: user.id})
+   
+    await sendEmail({email, emailType: "VERIFY"})
 
 
     return NextResponse.json({success: true, user});

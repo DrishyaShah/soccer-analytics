@@ -1,11 +1,14 @@
 "use client";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 import React, { useEffect, useState } from "react";
 import "../globals.css"
 import axios from "axios";
 import {toast} from "react-toastify";
+import {signIn} from "next-auth/react"
+import Link from "next/link";
+
 const LoginPage = () => {
   const router = useRouter();
   const [formData, setFormData] = useState({
@@ -35,6 +38,9 @@ const LoginPage = () => {
     }
   }, []);
 
+  const searchParams = useSearchParams();
+  const callbackUrl = searchParams.get("http://localhost:3000/api/auth/callback/google") || "/dashboard"
+
   const onLogin = async (e) => {
     e.preventDefault();
     try {
@@ -60,6 +66,14 @@ const LoginPage = () => {
       setIsLoading(false);
     }
   };
+
+const googleHandleClick = () => 
+{
+  signIn("google", {callbackUrl: 'http://localhost:3000/dashboard'});
+  // router.push("/dashboard");
+}
+
+
   useEffect(() => {
     if (formData.email.length > 0 && formData.password.length > 0) {
       setButtonDisabled(false);
@@ -78,11 +92,27 @@ const LoginPage = () => {
     setShowPassword((prevShowPassword) => !prevShowPassword);
   };
 
+  
   return (
-    <div className="min-h-screen bg-black flex">
+    <div className=" min-h-screen bg-black flex ">
       <div className="w-full flex items-center justify-center p-4">
-        <div className="bg-[#111312] p-7 rounded-xl shadow-lg">
+        <div className="bg-[#111312] p-7 rounded-xl shadow-lg w-full max-w-sm">
           <h3 className="text-xl font-bold text-white mb-6">Account Login</h3>
+          <div>
+            <button
+              onClick={googleHandleClick}
+              className="rounded w-full flex justify-center items-center font-semibold h-12 px-6 mt-4 text-md mb-6 transition-colors duration-300 bg-[#24292b] text-white rounded-lg hover:bg-yellow-500 hover:text-black"
+            >
+              <span className="ml-4">Continue with Google</span>
+            </button>
+          </div>
+      {/* <Image src={googleLogo} alt="Google Logo" width={20} height={20} /> */}
+      <div className="flex items-center mb-6">
+            <div className="flex-grow border-t border-yellow-500"></div>
+            <span className="mx-4 text-yellow-500">or</span>
+            <div className="flex-grow border-t border-yellow-500"></div>
+          </div>
+      <div className="mb-4"></div>
           <form onSubmit={onLogin}>
             <div className="mb-6">
               <input
@@ -127,7 +157,15 @@ const LoginPage = () => {
                 Remember me
               </label>
             </div>
-
+            <div className="mb-6">
+            <Link
+                href="/recoverPassword"
+                className="text-yellow-400 relative inline-block underline-bg cursor-pointer"
+                
+              >
+                Forgot Password?
+              </Link>
+            </div>
             <button
               type="submit"
               className="rounded bg-[#24292b] text-white font-bold py-2 px-6  inline-block transition duration-500 ease-in-out hover:bg-yellow-500 hover:text-black "
