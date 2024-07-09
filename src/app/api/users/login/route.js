@@ -24,7 +24,7 @@ export async function POST(req) {
 
     
     const tokenData = {
-      id: user.id,
+      userId: user.userId,
       email: user.email,
       firstName: user.firstName,
       lastName: user.lastName,

@@ -1,14 +1,18 @@
 "use client";
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, FormEvent } from 'react';
 import { signupSchema } from '@/schemas/signupSchema';
 import { useRouter } from 'next/navigation';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
 import {toast} from "react-toastify"
 import axios from 'axios';
+import { useGoogleReCaptcha } from 'react-google-recaptcha-v3';
+import Link from 'next/link';
 
 
 const SignupForm = () => {
+  const {executeRecaptcha} = useGoogleReCaptcha();
+  const [submitStatus, setSubmitStatus] = useState('');
   const router = useRouter();
   const [errors, setErrors] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -40,20 +44,50 @@ const SignupForm = () => {
   const onSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true);
+    setSubmitStatus('');
+    if (!executeRecaptcha) {
+      console.error('ReCAPTCHA not available');
+      return;
+    }
+
+    const gRecaptchaToken = await executeRecaptcha('recaptchaVerify');
+    try {
+      const response = await axios.post('/api/recaptchaVerify', {
+        gRecaptchaToken,
+      }, {
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (response.data.success) {
+        console.log(`Registration success with score: ${response.data.score}`);
+        setSubmitStatus('Registration Successful. Welcome!');
+      } else {
+        console.error(`Registration failure with score: ${response.data.score}`);
+        setSubmitStatus('Registration Failed. Please try again.');
+      }
+    } catch (error) {
+      console.error('Error submitting form:', error);
+      setSubmitStatus('An error occurred. Please try again.');
+    }
+
 
     const response = signupSchema.safeParse(formData);
     if (!response.success) {
 
-      let errArr = [];
-      const { errors: err } = response.error;
-      for (let i = 0; i < err.length; i++) {
-        errArr.push({ for: err[i].path[0], message: err[i].message });
-      }
+      let errArr = response.error.errors.map((err) => ({
+        for: err.path[0],
+        message: err.message
+      }));
       setErrors(errArr);
+      setIsLoading(false);
+      return;
     } else {
       setErrors([]);
-     
     }
+
 
     
     try {
@@ -68,7 +102,7 @@ const SignupForm = () => {
       console.log(formData)
 
       console.log("Signup failed")
-      toast.error("REgistration failed");
+      toast.error("Registration failed");
     }
     finally {
     setIsLoading(false);
@@ -102,7 +136,7 @@ const SignupForm = () => {
                 value={formData.firstName}
               />
               {errors.find((error) => error.for === "firstName")?.message && (
-                <p className="text-red-500">{errors.find((error) => error.for === "firstName")?.message}</p>
+                <p className="text-red-500 text-sm">{errors.find((error) => error.for === "firstName")?.message}</p>
               )}
             </div>
             <div className="mb-6">
@@ -115,7 +149,7 @@ const SignupForm = () => {
                 value={formData.lastName}
               />
               {errors.find((error) => error.for === "lastName")?.message && (
-                <p className="text-red-500">{errors.find((error) => error.for === "lastName")?.message}</p>
+                <p className="text-red-500 text-sm">{errors.find((error) => error.for === "lastName")?.message}</p>
               )}
             </div>
             <div className="mb-6">
@@ -128,11 +162,11 @@ const SignupForm = () => {
                 value={formData.email}
               />
               {errors.find((error) => error.for === "email")?.message && (
-                <p className="text-red-500">{errors.find((error) => error.for === "email")?.message}</p>
+                <p className="text-red-500 text-sm">{errors.find((error) => error.for === "email")?.message}</p>
               )}
             </div>
             <div className="mb-6 relative">
-              <div className='flex justify-content items-center'>
+              <div className='flex justify-content items-center relative'>
               <input
                 type={showPassword ? "text" : "password"}
                 name="password"
@@ -154,11 +188,11 @@ const SignupForm = () => {
               </button>
               </div>
               {errors.find((error) => error.for === "password")?.message && (
-                <p className="text-red-500">{errors.find((error) => error.for === "password")?.message}</p>
+                <p className="text-red-500 text-sm">{errors.find((error) => error.for === "password")?.message}</p>
               )}
             </div>
             <div className="mb-6 rounded-lg relative">
-              <div className='flex'>
+              <div className='flex justify-content items-center relative'>
               <input
                 type={showPassword ? "text" : "password"}
                 name="confirmPassword"
@@ -180,7 +214,7 @@ const SignupForm = () => {
               </button>
               </div>
               {errors.find((error) => error.for === "confirmPassword")?.message && (
-                <p className="text-red-500">{errors.find((error) => error.for === "confirmPassword")?.message}</p>
+                <p className="text-red-500 text-sm">{errors.find((error) => error.for === "confirmPassword")?.message}</p>
               )}
             </div>
             <button

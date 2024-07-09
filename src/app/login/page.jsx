@@ -6,7 +6,7 @@ import React, { useEffect, useState } from "react";
 import "../globals.css"
 import axios from "axios";
 import {toast} from "react-toastify";
-import {signIn} from "next-auth/react"
+import {signIn, signOut, useSession} from "next-auth/react"
 import Link from "next/link";
 
 const LoginPage = () => {
@@ -19,6 +19,16 @@ const LoginPage = () => {
   const [buttonDisabled, setButtonDisabled] = useState(true);
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
+
+  // const {data: session, status} = useSession()
+
+
+  // useEffect(() => {
+  //   if (session) {
+  //     router.push("/dashboard"); // Redirect if user is already logged in
+  //   }
+  // }, [session]);
+
   useEffect(() => {
     document.body.style.overflow = "hidden";
 
@@ -38,8 +48,8 @@ const LoginPage = () => {
     }
   }, []);
 
-  const searchParams = useSearchParams();
-  const callbackUrl = searchParams.get("http://localhost:3000/api/auth/callback/google") || "/dashboard"
+  // const searchParams = useSearchParams();
+  // const callbackUrl = searchParams.get("http://localhost:3000/api/auth/callback/google") || "/dashboard"
 
   const onLogin = async (e) => {
     e.preventDefault();
@@ -69,8 +79,15 @@ const LoginPage = () => {
 
 const googleHandleClick = () => 
 {
-  signIn("google", {callbackUrl: 'http://localhost:3000/dashboard'});
-  // router.push("/dashboard");
+  signIn("google", { callbackUrl: "http://localhost:3000/dashboard" })
+      .then(() => {
+        console.log("Google Login Successful");
+        toast.success("Google Login Successful", { className: "toast-success" });
+      })
+      .catch((error) => {
+        console.error("Google Login Failed", error);
+        toast.error("Google Login Failed", { className: "toast-error" });
+      });
 }
 
 
@@ -103,7 +120,7 @@ const googleHandleClick = () =>
               onClick={googleHandleClick}
               className="rounded w-full flex justify-center items-center font-semibold h-12 px-6 mt-4 text-md mb-6 transition-colors duration-300 bg-[#24292b] text-white rounded-lg hover:bg-yellow-500 hover:text-black"
             >
-              <span className="ml-4">Continue with Google</span>
+              <span>Continue with Google</span>
             </button>
           </div>
       {/* <Image src={googleLogo} alt="Google Logo" width={20} height={20} /> */}
