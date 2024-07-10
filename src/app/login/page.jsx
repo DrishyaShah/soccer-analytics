@@ -6,7 +6,7 @@ import React, { useEffect, useState } from "react";
 import "../globals.css"
 import axios from "axios";
 import {toast} from "react-toastify";
-import {signIn, signOut, useSession} from "next-auth/react"
+import {signIn} from "next-auth/react"
 import Link from "next/link";
 
 const LoginPage = () => {
@@ -79,7 +79,7 @@ const LoginPage = () => {
 
 const googleHandleClick = () => 
 {
-  signIn("google", { callbackUrl: "http://localhost:3000/dashboard" })
+  signIn("google", { callbackUrl: "https://soccer-analytics-blond.vercel.app/dashboard" })
       .then(() => {
         console.log("Google Login Successful");
         toast.success("Google Login Successful", { className: "toast-success" });
