@@ -7,7 +7,7 @@ import { toast } from 'react-toastify'
 
 
 
-const recoverPassword = () => {
+const RecoverPassword = () => {
 
     const [email, setEmail] = useState('')
     useEffect(() => {
@@ -70,4 +70,4 @@ const onSubmit = async (e) =>
   )
 }
 
-export default recoverPassword
+export default RecoverPassword
