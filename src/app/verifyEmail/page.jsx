@@ -6,7 +6,7 @@ import Link from "next/link";
 import React, {useEffect, useState} from "react";
 import { toast } from "react-toastify";
 
-export default function verifyEmailPage()
+export default function VerifyEmailPage()
 {
     const [token, setToken] = useState("");
     const [verified, setVerified] = useState(false);
